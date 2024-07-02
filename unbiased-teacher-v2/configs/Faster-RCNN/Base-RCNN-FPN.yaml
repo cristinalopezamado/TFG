@@ -59,4 +59,4 @@ TEST:
   PCB_UPPER: 1.0
   PCB_LOWER: 0.05
 
-OUTPUT_DIR: "/models/prueba"
+OUTPUT_DIR: "output/"
