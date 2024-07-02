@@ -23,8 +23,7 @@ RUN wget https://bootstrap.pypa.io/get-pip.py && \
     rm get-pip.py
     
 #torch e torchvision
-RUN pip install torch==1.8.1+cu111 torchvision==0.9.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
-RUN pip install --upgrade torch torchvision
+RUN pip install torch==2.3.1 torchvision==0.18.1 -f https://download.pytorch.org/whl/cu111/torch_stable.html
 
 # Paquetes adicionais necesarios para Detectron2 e omegaconf
 RUN pip install cython pyyaml==5.4.1 matplotlib opencv-python omegaconf scikit-learn
