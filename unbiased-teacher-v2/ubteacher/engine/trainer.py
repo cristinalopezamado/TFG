@@ -1152,10 +1152,34 @@ class UBRCNNTeacherTrainer(DefaultTrainer):
                 all_label_data, branch="supervised"
             )
             record_dict.update(record_all_label_data)
+            
+            #Se hai simota elimino as imaxes sen gt
+            if self.cfg.MODEL.SIMOTA_ASSIGNMENT:
+                #Elimino os que non teñen gt
+                indicesEliminar=[]
+                for i in range(len(all_unlabel_data)):
+                    if all_unlabel_data[i]['instances'].gt_classes.numel()==0:
+                        indicesEliminar.append(i)
+                all_unlabel_data = [elem for i, elem in enumerate(all_unlabel_data) if i not in indicesEliminar]
 
-            record_all_unlabel_data, _, _, _ = self.model(
-                all_unlabel_data, branch="unsup_data_train"
-            )
+                #Se ningun dato tiña anotacions descartase
+                if all_unlabel_data:
+                    record_all_unlabel_data, _, _, _ = self.model(
+                        all_unlabel_data, branch="unsup_data_train"
+                    )
+                else:
+                    d=record_all_label_data['loss_cls'].device
+                    record_all_unlabel_data = {
+                        'loss_cls': torch.tensor(0,device=d),
+                        'loss_box_reg': torch.tensor(0,device=d),
+                        'loss_rpn_cls': torch.tensor(0,device=d),
+                        'loss_rpn_loc': torch.tensor(0,device=d)
+                    }
+            else:
+                record_all_unlabel_data, _, _, _ = self.model(
+                    all_unlabel_data, branch="unsup_data_train"
+                )
+
 
             new_record_all_unlabel_data = {}
             for key in record_all_unlabel_data.keys():
